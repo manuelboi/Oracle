@@ -22,6 +22,8 @@ contract = w3.eth.contract(address=contractAddress, abi=contractABI)
 # Event handling
 def handle_event(event):
     # Event print
+    print('NUOVA RICHIESTA DI DATI')
+    print("Evento:")
     print(event)
 
     # Get blockchain address from event
@@ -45,6 +47,7 @@ def handle_event(event):
     # Send transaction
     sentTransaction = w3.eth.send_raw_transaction(signedTransaction.rawTransaction)
     transactionReceipt = w3.eth.wait_for_transaction_receipt(sentTransaction)
+    print("Ricevuta transazione iniezione dati:")
     print(transactionReceipt)
     # Transaction to emit dataReadyEvent
     nonce = w3.eth.getTransactionCount(walletAddress)
@@ -56,6 +59,7 @@ def handle_event(event):
     # Send transaction
     sentTransaction = w3.eth.send_raw_transaction(signedTransaction.rawTransaction)
     transactionReceipt = w3.eth.wait_for_transaction_receipt(sentTransaction)
+    print("Ricevuta transazione emissione evento dati pronti:")
     print(transactionReceipt)
 
 
