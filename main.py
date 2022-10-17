@@ -9,7 +9,21 @@ if not w3.isConnected():
 
 # Contract infos
 contractAddress = '0x054a49AB33d9520F03593b7c9b5abb24BbbECBA1'
-contractABI = '[ { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [], "name": "dataReadyEvent", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "adr", "type": "address" } ], "name": "dataRequestEvent", "type": "event" }, { "inputs": [], "name": "emitDataReadyEvent", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "emitDataRequestEvent", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "components": [ { "internalType": "string", "name": "id", "type": "string" }, { "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "surname", "type": "string" } ], "internalType": "struct StudentCurriculum.Student", "name": "student", "type": "tuple" } ], "name": "setData", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "requestData", "outputs": [ { "components": [ { "internalType": "string", "name": "id", "type": "string" }, { "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "surname", "type": "string" } ], "internalType": "struct StudentCurriculum.Student", "name": "student", "type": "tuple" } ], "stateMutability": "view", "type": "function" } ]'
+contractABI = '[ { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, ' \
+              '"inputs": [], "name": "dataReadyEvent", "type": "event" }, { "anonymous": false, "inputs": [ { ' \
+              '"indexed": false, "internalType": "address", "name": "adr", "type": "address" } ], ' \
+              '"name": "dataRequestEvent", "type": "event" }, { "inputs": [], "name": "emitDataReadyEvent", ' \
+              '"outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], ' \
+              '"name": "emitDataRequestEvent", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, ' \
+              '{ "inputs": [ { "components": [ { "internalType": "string", "name": "id", "type": "string" }, ' \
+              '{ "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", ' \
+              '"name": "surname", "type": "string" } ], "internalType": "struct StudentCurriculum.Student", ' \
+              '"name": "student", "type": "tuple" } ], "name": "setData", "outputs": [], "stateMutability": ' \
+              '"nonpayable", "type": "function" }, { "inputs": [], "name": "requestData", "outputs": [ { ' \
+              '"components": [ { "internalType": "string", "name": "id", "type": "string" }, { "internalType": ' \
+              '"string", "name": "name", "type": "string" }, { "internalType": "string", "name": "surname", ' \
+              '"type": "string" } ], "internalType": "struct StudentCurriculum.Student", "name": "student", ' \
+              '"type": "tuple" } ], "stateMutability": "view", "type": "function" } ] '
 
 # Wallet infos
 walletAddress = '0x2f2a3bE0f87D2EC706576b457b527eBF1E38d168'
@@ -27,40 +41,45 @@ def handle_event(event):
     print(event)
 
     # Get blockchain address from event
-    blockchainAddress = event.args['adr']
+    blockchain_address = event.args['adr']
 
     # Get data from database
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
-    c.execute('SELECT * FROM Studenti WHERE Studenti.IndirizzoBlockchain = ?', (blockchainAddress,))
-    studentData = c.fetchone()
+    c.execute('SELECT * FROM Studenti WHERE Studenti.IndirizzoBlockchain = ?', (blockchain_address,))
+    student_data = c.fetchone()
     conn.commit()
     conn.close()
+
+    # Data organization
+    ID = student_data[0]
+    name = student_data[1]
+    surname = student_data[2]
 
     # Transaction to set data
     nonce = w3.eth.getTransactionCount(walletAddress)
     # Build transaction
-    transaction = contract.functions.setData((studentData[0], studentData[1], studentData[2])).buildTransaction(
+    transaction = contract.functions.setData(blockchain_address, (ID, name, surname)).buildTransaction(
         {"chainId": 5, "from": walletAddress, "nonce": nonce})
     # Sign transaction
-    signedTransaction = w3.eth.account.sign_transaction(transaction, private_key=privateKey)
+    signed_transaction = w3.eth.account.sign_transaction(transaction, private_key=privateKey)
     # Send transaction
-    sentTransaction = w3.eth.send_raw_transaction(signedTransaction.rawTransaction)
-    transactionReceipt = w3.eth.wait_for_transaction_receipt(sentTransaction)
+    sent_transaction = w3.eth.send_raw_transaction(signed_transaction.rawTransaction)
+    transaction_receipt = w3.eth.wait_for_transaction_receipt(sent_transaction)
     print("Ricevuta transazione iniezione dati:")
-    print(transactionReceipt)
+    print(transaction_receipt)
     # Transaction to emit dataReadyEvent
     nonce = w3.eth.getTransactionCount(walletAddress)
     # Build transaction
-    transaction = contract.functions.emitDataReadyEvent().buildTransaction(
+    transaction = contract.functions.emitDataReadyEvent(blockchain_address).buildTransaction(
         {"chainId": 5, "from": walletAddress, "nonce": nonce})
     # Sign transaction
-    signedTransaction = w3.eth.account.sign_transaction(transaction, private_key=privateKey)
+    signed_transaction = w3.eth.account.sign_transaction(transaction, private_key=privateKey)
     # Send transaction
-    sentTransaction = w3.eth.send_raw_transaction(signedTransaction.rawTransaction)
-    transactionReceipt = w3.eth.wait_for_transaction_receipt(sentTransaction)
+    sent_transaction = w3.eth.send_raw_transaction(signed_transaction.rawTransaction)
+    transaction_receipt = w3.eth.wait_for_transaction_receipt(sent_transaction)
     print("Ricevuta transazione emissione evento dati pronti:")
-    print(transactionReceipt)
+    print(transaction_receipt)
 
 
 async def log_loop(event_filter, poll_interval):
@@ -84,5 +103,6 @@ def main():
 if __name__ == "__main__":
     main()
 
-
-# c.execute('SELECT * FROM ((Studenti JOIN Carriere ON Studenti.Matricola = Carriere.EseguitaDa) JOIN Esami ON Carriere.ID = Esami.Carriera) JOIN Insegnamenti ON Esami.Insegnamento = Insegnamenti.ID WHERE Studenti.IndirizzoBlockchain = ?', ('0x2f2a3bE0f87D2EC706576b457b527eBF1E38d168',))
+# c.execute('SELECT * FROM ((Studenti JOIN Carriere ON Studenti.Matricola = Carriere.EseguitaDa) JOIN Esami ON
+# Carriere.ID = Esami.Carriera) JOIN Insegnamenti ON Esami.Insegnamento = Insegnamenti.ID WHERE
+# Studenti.IndirizzoBlockchain = ?', ('0x2f2a3bE0f87D2EC706576b457b527eBF1E38d168',))

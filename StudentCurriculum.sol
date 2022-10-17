@@ -7,14 +7,22 @@ contract StudentCurriculum {
 
 
     // Structs
+    struct Teaching {
+        int id;
+        string name;
+    }
+
     struct Exam {
         int id;
         int mark;
+        uint date;
+        Teaching teaching;
     }
 
     struct Career {
-        int id;
+        string id;
         string studyCourse;
+        bool completed;
         Exam[] exams;
     }
     
@@ -25,40 +33,29 @@ contract StudentCurriculum {
         Career[] careers;
     }
 
+    mapping(address => Student) public students;
+
 
     //Events
     event dataRequestEvent(address adr);
-    event dataReadyEvent();
-
-
-    // Attributes
-    address _ad;
-    Student _student;
-
-
-    // Constructor
-    constructor() {
-        _ad = address(0);
-    }
+    event dataReadyEvent(address adr);
 
 
     // Functions
     function emitDataRequestEvent() public {
-        _ad = msg.sender;
-        emit dataRequestEvent(_ad);
+        emit dataRequestEvent(msg.sender);
     }
 
-    function setData(Student calldata student) public {
-        _student = student;
+    function setData(address adr, Student calldata student) public {
+        students[adr] = student;
     }
 
-    function emitDataReadyEvent() public {
-        emit dataReadyEvent();
+    function emitDataReadyEvent(address adr) public {
+        emit dataReadyEvent(adr);
     }
 
     function requestData() public view returns(Student memory student) {
-        if (msg.sender == _ad)
-            return _student;
+        return students[msg.sender];
     }
 
 
