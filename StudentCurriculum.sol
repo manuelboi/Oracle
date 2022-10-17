@@ -7,16 +7,10 @@ contract StudentCurriculum {
 
 
     // Structs
-    struct Teaching {
-        int id;
-        string name;
-    }
-
     struct Exam {
-        int id;
         int mark;
         uint date;
-        Teaching teaching;
+        string teaching;
     }
 
     struct Career {
@@ -27,7 +21,6 @@ contract StudentCurriculum {
     }
     
     struct Student {
-        string id;
         string name;
         string surname;
         Career[] careers;
@@ -46,7 +39,7 @@ contract StudentCurriculum {
         emit dataRequestEvent(msg.sender);
     }
 
-    function setData(address adr, Student calldata student) public {
+    function setData(Student memory student, address adr) public {
         students[adr] = student;
     }
 
@@ -54,8 +47,8 @@ contract StudentCurriculum {
         emit dataReadyEvent(adr);
     }
 
-    function requestData() public view returns(Student memory student) {
-        return students[msg.sender];
+    function requestData(address adr) public view returns(Student memory student) {
+        return students[adr];
     }
 
 
