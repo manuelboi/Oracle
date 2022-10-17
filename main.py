@@ -8,26 +8,12 @@ if not w3.isConnected():
     raise ConnectionError("La connessione al nodo Infura è fallita")
 
 # Contract infos
-contractAddress = '0x054a49AB33d9520F03593b7c9b5abb24BbbECBA1'
-contractABI = '[ { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, ' \
-              '"inputs": [], "name": "dataReadyEvent", "type": "event" }, { "anonymous": false, "inputs": [ { ' \
-              '"indexed": false, "internalType": "address", "name": "adr", "type": "address" } ], ' \
-              '"name": "dataRequestEvent", "type": "event" }, { "inputs": [], "name": "emitDataReadyEvent", ' \
-              '"outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], ' \
-              '"name": "emitDataRequestEvent", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, ' \
-              '{ "inputs": [ { "components": [ { "internalType": "string", "name": "id", "type": "string" }, ' \
-              '{ "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", ' \
-              '"name": "surname", "type": "string" } ], "internalType": "struct StudentCurriculum.Student", ' \
-              '"name": "student", "type": "tuple" } ], "name": "setData", "outputs": [], "stateMutability": ' \
-              '"nonpayable", "type": "function" }, { "inputs": [], "name": "requestData", "outputs": [ { ' \
-              '"components": [ { "internalType": "string", "name": "id", "type": "string" }, { "internalType": ' \
-              '"string", "name": "name", "type": "string" }, { "internalType": "string", "name": "surname", ' \
-              '"type": "string" } ], "internalType": "struct StudentCurriculum.Student", "name": "student", ' \
-              '"type": "tuple" } ], "stateMutability": "view", "type": "function" } ] '
+contractAddress = '0x3c7E440Ff39229ba719C38b30fc9C197243f53FD'
+contractABI = '[ { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "adr", "type": "address" } ], "name": "dataReadyEvent", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "adr", "type": "address" } ], "name": "dataRequestEvent", "type": "event" }, { "inputs": [ { "internalType": "address", "name": "adr", "type": "address" } ], "name": "emitDataReadyEvent", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "emitDataRequestEvent", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "components": [ { "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "surname", "type": "string" } ], "internalType": "struct StudentCurriculum.Student", "name": "student", "type": "tuple" }, { "internalType": "address", "name": "adr", "type": "address" } ], "name": "setData", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "adr", "type": "address" } ], "name": "requestData", "outputs": [ { "components": [ { "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "surname", "type": "string" } ], "internalType": "struct StudentCurriculum.Student", "name": "student", "type": "tuple" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "", "type": "address" } ], "name": "students", "outputs": [ { "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "surname", "type": "string" } ], "stateMutability": "view", "type": "function" } ]'
 
 # Wallet infos
-walletAddress = '0x2f2a3bE0f87D2EC706576b457b527eBF1E38d168'
 privateKey = '2fba56769b62d9bfa52eaa77f782fabfdc4b96d2d124b142a9ca3ad511e36f34'
+walletAddress = w3.eth.account.from_key(privateKey).address
 
 # Contract instance create and link
 contract = w3.eth.contract(address=contractAddress, abi=contractABI)
@@ -36,6 +22,7 @@ contract = w3.eth.contract(address=contractAddress, abi=contractABI)
 # Event handling
 def handle_event(event):
     # Event print
+    print()
     print('NUOVA RICHIESTA DI DATI')
     print("Evento:")
     print(event)
@@ -46,7 +33,7 @@ def handle_event(event):
     # Get data from database
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
-    c.execute('SELECT * FROM Studenti WHERE Studenti.IndirizzoBlockchain = ?', (blockchain_address,))
+    c.execute('SELECT Nome, Cognome FROM Studenti WHERE Studenti.IndirizzoBlockchain = ?', (blockchain_address,))
     student_data = c.fetchone()
     conn.commit()
     conn.close()
@@ -54,12 +41,11 @@ def handle_event(event):
     # Data organization
     ID = student_data[0]
     name = student_data[1]
-    surname = student_data[2]
 
     # Transaction to set data
     nonce = w3.eth.getTransactionCount(walletAddress)
     # Build transaction
-    transaction = contract.functions.setData(blockchain_address, (ID, name, surname)).buildTransaction(
+    transaction = contract.functions.setData(student_data, blockchain_address).buildTransaction(
         {"chainId": 5, "from": walletAddress, "nonce": nonce})
     # Sign transaction
     signed_transaction = w3.eth.account.sign_transaction(transaction, private_key=privateKey)
@@ -68,6 +54,7 @@ def handle_event(event):
     transaction_receipt = w3.eth.wait_for_transaction_receipt(sent_transaction)
     print("Ricevuta transazione iniezione dati:")
     print(transaction_receipt)
+
     # Transaction to emit dataReadyEvent
     nonce = w3.eth.getTransactionCount(walletAddress)
     # Build transaction
