@@ -16,8 +16,7 @@ contract StudentCurriculum {
     struct Career {
         string id;
         string studyCourse;
-        bool completed;
-        Exam[] exams;
+        int completed;
     }
     
     struct Student {
@@ -39,7 +38,7 @@ contract StudentCurriculum {
         emit dataRequestEvent(msg.sender);
     }
 
-    function setData(Student memory student, address adr) public {
+    function setData(Student calldata student, address adr) public {
         students[adr] = student;
     }
 
