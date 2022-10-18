@@ -8,8 +8,39 @@ if not w3.isConnected():
     raise ConnectionError("La connessione al nodo Infura è fallita")
 
 # Contract infos
-contractAddress = '0x2a15849be62b46C416e84A134c3f196B0B4850c0'
-contractABI = '[ { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "adr", "type": "address" } ], "name": "dataReadyEvent", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "adr", "type": "address" } ], "name": "dataRequestEvent", "type": "event" }, { "inputs": [ { "internalType": "address", "name": "adr", "type": "address" } ], "name": "emitDataReadyEvent", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "emitDataRequestEvent", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "components": [ { "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "surname", "type": "string" }, { "components": [ { "internalType": "string", "name": "id", "type": "string" }, { "internalType": "string", "name": "studyCourse", "type": "string" }, { "internalType": "int256", "name": "completed", "type": "int256" } ], "internalType": "struct StudentCurriculum.Career[]", "name": "careers", "type": "tuple[]" } ], "internalType": "struct StudentCurriculum.Student", "name": "student", "type": "tuple" }, { "internalType": "address", "name": "adr", "type": "address" } ], "name": "setData", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "adr", "type": "address" } ], "name": "requestData", "outputs": [ { "components": [ { "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "surname", "type": "string" }, { "components": [ { "internalType": "string", "name": "id", "type": "string" }, { "internalType": "string", "name": "studyCourse", "type": "string" }, { "internalType": "int256", "name": "completed", "type": "int256" } ], "internalType": "struct StudentCurriculum.Career[]", "name": "careers", "type": "tuple[]" } ], "internalType": "struct StudentCurriculum.Student", "name": "student", "type": "tuple" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "", "type": "address" } ], "name": "students", "outputs": [ { "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "surname", "type": "string" } ], "stateMutability": "view", "type": "function" } ]'
+contractAddress = '0x9192085ab0E99cfAA9d4628dB566587Cc912d462'
+contractABI = '[ { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "adr", ' \
+              '"type": "address" } ], "name": "dataReadyEvent", "type": "event" }, { "anonymous": false, "inputs": [ ' \
+              '{ "indexed": false, "internalType": "address", "name": "adr", "type": "address" } ], ' \
+              '"name": "dataRequestEvent", "type": "event" }, { "inputs": [ { "internalType": "address", ' \
+              '"name": "adr", "type": "address" } ], "name": "emitDataReadyEvent", "outputs": [], "stateMutability": ' \
+              '"nonpayable", "type": "function" }, { "inputs": [], "name": "emitDataRequestEvent", "outputs": [], ' \
+              '"stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "components": [ { ' \
+              '"internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", ' \
+              '"name": "surname", "type": "string" }, { "components": [ { "internalType": "string", "name": "id", ' \
+              '"type": "string" }, { "internalType": "string", "name": "studyCourse", "type": "string" }, ' \
+              '{ "internalType": "int256", "name": "completed", "type": "int256" }, { "components": [ { ' \
+              '"internalType": "int256", "name": "mark", "type": "int256" }, { "internalType": "uint256", ' \
+              '"name": "date", "type": "uint256" }, { "internalType": "string", "name": "teaching", "type": "string" ' \
+              '} ], "internalType": "struct StudentCurriculum.Exam[]", "name": "exams", "type": "tuple[]" } ], ' \
+              '"internalType": "struct StudentCurriculum.Career[]", "name": "careers", "type": "tuple[]" } ], ' \
+              '"internalType": "struct StudentCurriculum.Student", "name": "student", "type": "tuple" }, ' \
+              '{ "internalType": "address", "name": "adr", "type": "address" } ], "name": "setData", "outputs": [], ' \
+              '"stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", ' \
+              '"name": "adr", "type": "address" } ], "name": "requestData", "outputs": [ { "components": [ { ' \
+              '"internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", ' \
+              '"name": "surname", "type": "string" }, { "components": [ { "internalType": "string", "name": "id", ' \
+              '"type": "string" }, { "internalType": "string", "name": "studyCourse", "type": "string" }, ' \
+              '{ "internalType": "int256", "name": "completed", "type": "int256" }, { "components": [ { ' \
+              '"internalType": "int256", "name": "mark", "type": "int256" }, { "internalType": "uint256", ' \
+              '"name": "date", "type": "uint256" }, { "internalType": "string", "name": "teaching", "type": "string" ' \
+              '} ], "internalType": "struct StudentCurriculum.Exam[]", "name": "exams", "type": "tuple[]" } ], ' \
+              '"internalType": "struct StudentCurriculum.Career[]", "name": "careers", "type": "tuple[]" } ], ' \
+              '"internalType": "struct StudentCurriculum.Student", "name": "student", "type": "tuple" } ], ' \
+              '"stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "address", ' \
+              '"name": "", "type": "address" } ], "name": "students", "outputs": [ { "internalType": "string", ' \
+              '"name": "name", "type": "string" }, { "internalType": "string", "name": "surname", "type": "string" } ' \
+              '], "stateMutability": "view", "type": "function" } ] '
 
 # Wallet infos
 privateKey = '2fba56769b62d9bfa52eaa77f782fabfdc4b96d2d124b142a9ca3ad511e36f34'
@@ -46,12 +77,17 @@ def handle_event(event):
     # Get careers data
     c.execute('SELECT Matricola, CorsoDiStudio, Completata FROM Carriere WHERE Carriere.StudenteID = ?', (ID,))
     careers_data = c.fetchall()
+    careers = []
+
+    for career in careers_data:
+        c.execute('SELECT Esami.Valutazione, Esami.Data, Insegnamenti.Nome FROM Esami JOIN Insegnamenti ON Esami.InsegnamentoID = Insegnamenti.ID WHERE Esami.CarrieraMatricola = ?', (career[0],))
+        careers.append((career[0], career[1], career[2], c.fetchall()))
 
     # Close database connection
     conn.commit()
     conn.close()
 
-    data = (name, surname, careers_data)
+    data = (name, surname, careers)
 
     # Transaction to set data
     nonce = w3.eth.getTransactionCount(walletAddress)

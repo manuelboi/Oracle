@@ -17,6 +17,7 @@ contract StudentCurriculum {
         string id;
         string studyCourse;
         int completed;
+        Exam[] exams;
     }
     
     struct Student {
