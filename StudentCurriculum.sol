@@ -26,12 +26,22 @@ contract StudentCurriculum {
         Career[] careers;
     }
 
+
+    // Attributes
     mapping(address => Student) public students;
+    address _oracleAddress = 0x2f2a3bE0f87D2EC706576b457b527eBF1E38d168;
 
 
-    //Events
+    // Events
     event dataRequestEvent(address adr);
     event dataReadyEvent(address adr);
+
+
+    //Modifiers
+    modifier onlyOracle() {
+        require(msg.sender == _oracleAddress, "Only the Oracle can set data.");
+        _;
+    }
 
 
     // Functions
@@ -39,7 +49,7 @@ contract StudentCurriculum {
         emit dataRequestEvent(msg.sender);
     }
 
-    function setData(Student calldata student, address adr) public {
+    function setData(Student calldata student, address adr) public onlyOracle {
         students[adr] = student;
     }
 
@@ -47,8 +57,10 @@ contract StudentCurriculum {
         emit dataReadyEvent(adr);
     }
 
-    function requestData(address adr) public view returns(Student memory student) {
-        return students[adr];
+    function requestData(address adr) public returns(Student memory student) {
+        student = students[adr];
+        delete students[adr];
+        return student;
     }
 
 
