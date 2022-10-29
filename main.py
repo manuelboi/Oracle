@@ -136,7 +136,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# c.execute('SELECT * FROM ((Studenti JOIN Carriere ON Studenti.Matricola = Carriere.EseguitaDa) JOIN Esami ON
-# Carriere.ID = Esami.Carriera) JOIN Insegnamenti ON Esami.Insegnamento = Insegnamenti.ID WHERE
-# Studenti.IndirizzoBlockchain = ?', ('0x2f2a3bE0f87D2EC706576b457b527eBF1E38d168',))
