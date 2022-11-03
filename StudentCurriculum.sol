@@ -28,7 +28,7 @@ contract StudentCurriculum {
 
 
     // Attributes
-    mapping(address => Student) public students;
+    mapping(address => Student) _students;
     address _oracleAddress = 0x2f2a3bE0f87D2EC706576b457b527eBF1E38d168;
 
 
@@ -50,16 +50,17 @@ contract StudentCurriculum {
     }
 
     function setData(Student calldata student, address adr) public onlyOracle {
-        students[adr] = student;
+        _students[adr] = student;
     }
 
     function emitDataReadyEvent(address adr) public {
         emit dataReadyEvent(adr);
     }
 
-    function requestData(address adr) public returns(Student memory student) {
-        student = students[adr];
-        delete students[adr];
+    function requestData() public returns(Student memory student) {
+        address adr = msg.sender;
+        student = _students[adr];
+        delete _students[adr];
         return student;
     }
 
