@@ -39,7 +39,7 @@ contractABI = '[ { "anonymous": false, "inputs": [ { "indexed": false, "internal
               '"stateMutability": "nonpayable", "type": "function" } ] '
 
 # Wallet infos
-privateKey = '2fba56769b62d9bfa52eaa77f782fabfdc4b96d2d124b142a9ca3ad511e36f34'
+privateKey = ''
 walletAddress = w3.eth.account.from_key(privateKey).address
 
 # Contract instance create and link
