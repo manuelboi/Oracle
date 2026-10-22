@@ -3,7 +3,7 @@ import asyncio
 import sqlite3
 
 # Configure Infura
-w3 = Web3(Web3.HTTPProvider("https://goerli.infura.io/v3/a2d3ce8effcf445b8fea9dad109c9150"))
+w3 = Web3(Web3.HTTPProvider(""))
 if not w3.isConnected():
     raise ConnectionError("La connessione al nodo Infura è fallita")
 
